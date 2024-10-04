@@ -13,12 +13,11 @@ public class CuentaController {
     @GetMapping("/saldo/{nroCuenta}")
     public String obtenerSaldo(@PathVariable String nroCuenta) {
         Cuenta cuenta = CuentaDB.buscarCuenta(nroCuenta);
-        if (cuenta != null) {
-            return "Cuenta Nro. " + nroCuenta
-                 + "\nSaldo: $" + cuenta.consultarSaldo();
-        } else {
+        if (cuenta == null) {
             return "¡La cuenta consultada no existe en el Sistema!";
         }
+        return "Cuenta Nro. " + nroCuenta
+                + "\nSaldo: $" + cuenta.consultarSaldo();
     }
 
     //Depositar a una cuenta.
