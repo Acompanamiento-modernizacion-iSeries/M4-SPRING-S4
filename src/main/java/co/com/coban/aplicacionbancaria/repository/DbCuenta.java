@@ -1,11 +1,13 @@
 package co.com.coban.aplicacionbancaria.repository;
 
 import co.com.coban.aplicacionbancaria.entity.Cuenta;
+import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+@Repository
 public class DbCuenta {
     Set<Cuenta> cuentas = new HashSet<>();
 
