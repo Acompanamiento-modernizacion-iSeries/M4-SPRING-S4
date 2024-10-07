@@ -1,9 +1,9 @@
 package co.com.coban.aplicacionbancaria.controller;
 
+import co.com.coban.aplicacionbancaria.repository.DbCuenta;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -11,18 +11,12 @@ import java.math.BigDecimal;
 @RestController
 @RequestMapping("/cuenta")
 public class CuentaController {
-    // swagger api http://localhost:8080/swagger-ui/index.html
-
+    private DbCuenta dbCuenta = new DbCuenta();
     private BigDecimal saldo = new BigDecimal("1000.00");
 
-    @GetMapping("/bienvenido")
-    public String bienvenido() {
-        return "Bienvenido, en esta sección podrá realizar operaciones con su cuenta.";
-    }
-
-    @GetMapping("/saldo")
-    public BigDecimal saldo() {
-        return saldo;
+    @GetMapping("{id}/saldo")
+    public BigDecimal saldo(@PathVariable("id") String id) {
+        return dbCuenta.obtenerCuenta(id).getSaldo();
     }
 
     @PostMapping("/deposito/{monto}")
