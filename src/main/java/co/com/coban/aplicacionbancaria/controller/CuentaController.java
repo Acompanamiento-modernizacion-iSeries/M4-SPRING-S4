@@ -20,7 +20,7 @@ public class CuentaController {
     }
 
     @GetMapping("{id}/saldo")
-    public BigDecimal saldo(@PathVariable("id") String id) {
+    public String saldo(@PathVariable("id") String id) {
         return cuentaService.obtenerSaldo(id);
     }
 

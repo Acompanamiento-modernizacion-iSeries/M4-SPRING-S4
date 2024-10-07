@@ -13,37 +13,41 @@ public class CuentaService {
         this.dbCuenta = dbCuenta;
     }
 
-    public BigDecimal obtenerSaldo(String id) {
+    public String obtenerSaldo(String id) {
         if (dbCuenta.obtenerCuenta(id) == null) {
-            return null;
+            throw new IllegalArgumentException("La cuenta no existe.");
         }
-        return dbCuenta.obtenerCuenta(id).getSaldo();
+        return "El saldo de la cuenta es: " + dbCuenta.obtenerCuenta(id).getSaldo();
     }
 
     public String deposito(String id, BigDecimal monto) {
-        if (monto.compareTo(BigDecimal.ZERO) > 0) {
-            if (dbCuenta.obtenerCuenta(id) == null) {
-                return "La cuenta no existe.";
-            }
-            dbCuenta.obtenerCuenta(id).setSaldo(dbCuenta.obtenerCuenta(id).getSaldo().add(monto));
-            return "Depósito exitoso. Saldo actual: " + dbCuenta.obtenerCuenta(id).getSaldo();
-        } else {
-            return "El monto a depositar debe ser mayor a cero.";
+        validarMonto(monto);
+        if(!validarCuenta(id)){
+            return "La cuenta no existe.";
         }
+        dbCuenta.obtenerCuenta(id).setSaldo(dbCuenta.obtenerCuenta(id).getSaldo().add(monto));
+        return "Depósito exitoso. Saldo actual: " + dbCuenta.obtenerCuenta(id).getSaldo();
     }
 
     public String retiro(String id, BigDecimal monto) {
-        if (monto.compareTo(BigDecimal.ZERO) > 0) {
-            if (dbCuenta.obtenerCuenta(id) == null) {
-                return "La cuenta no existe.";
-            }
-            if (dbCuenta.obtenerCuenta(id).getSaldo().compareTo(monto) < 0) {
-                return "Saldo insuficiente.";
-            }
-            dbCuenta.obtenerCuenta(id).setSaldo(dbCuenta.obtenerCuenta(id).getSaldo().subtract(monto));
-            return "Retiro exitoso. Saldo actual: " + dbCuenta.obtenerCuenta(id).getSaldo();
-        } else {
-            return "El monto a retirar debe ser mayor a cero.";
+        validarMonto(monto);
+        if (!validarCuenta(id)) {
+            return "La cuenta no existe.";
+        }
+        if (dbCuenta.obtenerCuenta(id).getSaldo().compareTo(monto) < 0) {
+            return "Saldo insuficiente.";
+        }
+        dbCuenta.obtenerCuenta(id).setSaldo(dbCuenta.obtenerCuenta(id).getSaldo().subtract(monto));
+        return "Retiro exitoso. Saldo actual: " + dbCuenta.obtenerCuenta(id).getSaldo();
+    }
+
+    public boolean validarCuenta(String id) {
+        return dbCuenta.obtenerCuenta(id) != null;
+    }
+
+    public void validarMonto(BigDecimal monto) {
+        if (monto.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("El monto debe ser mayor a cero.");
         }
     }
 }
