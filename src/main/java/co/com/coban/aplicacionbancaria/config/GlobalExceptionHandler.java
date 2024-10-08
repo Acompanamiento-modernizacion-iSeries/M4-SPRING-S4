@@ -12,7 +12,12 @@ public class GlobalExceptionHandler {
     // que se lancen en cualquier controlador de la aplicación
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> manejarArgumentoInvalido(IllegalArgumentException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Argumento inválido: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<String> manejarCuentaNoEncontrada(NullPointerException ex) {
+        return new ResponseEntity<>("La cuenta no existe: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
