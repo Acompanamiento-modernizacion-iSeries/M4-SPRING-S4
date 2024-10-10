@@ -1,12 +1,13 @@
 package co.com.coban.aplicacionbancaria.controller;
 
+import co.com.coban.aplicacionbancaria.dto.CuentaDTO;
+import co.com.coban.aplicacionbancaria.dto.TransaccionDTO;
 import co.com.coban.aplicacionbancaria.service.CuentaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
-
-import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/cuenta")
@@ -18,17 +19,22 @@ public class CuentaController {
         this.cuentaService = cuentaService;
     }
 
-    @GetMapping("{id}/saldo")
-    public String saldo(@PathVariable("id") String id) {
-        return cuentaService.obtenerSaldo(id);
+    @GetMapping("saldo")
+    public String saldo(@Valid @RequestBody CuentaDTO cuenta) {
+        return cuentaService.obtenerSaldo(cuenta.getId());
     }
 
-    @PostMapping("/{id}/deposito/{monto}")
-    public String deposito(@PathVariable("id") String id, @PathVariable BigDecimal monto) {
-        return cuentaService.deposito(id, monto);
+//    @PostMapping("/{id}/deposito/{monto}")
+//    public String deposito(@PathVariable("id") String id, @PathVariable BigDecimal monto) {
+//        return cuentaService.deposito(id, monto);
+//    }
+
+    @PostMapping("/deposito")
+    public String deposito(@Valid @RequestBody TransaccionDTO transaccion, @Valid @RequestBody CuentaDTO cuenta) {
+        return cuentaService.deposito(cuenta.getId(), transaccion.getMonto());
     }
 
-    @PostMapping("/{id}/retiro/{monto}")
+    @PostMapping("/retiro")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retiro exitoso"),
             @ApiResponse(responseCode = "400", description = "Error en el retiro")
@@ -54,7 +60,7 @@ public class CuentaController {
                     )
             }
     )
-    public String retiro(@PathVariable("id") String id, @PathVariable BigDecimal monto) {
-        return cuentaService.retiro(id, monto);
+    public String retiro(@Valid @RequestBody TransaccionDTO transaccion, @Valid @RequestBody CuentaDTO cuenta) {
+        return cuentaService.retiro(cuenta.getId(), transaccion.getMonto());
     }
 }
