@@ -15,23 +15,6 @@ public class CuentaService {
         this.cuentaDB = cuentaDB;
     }
 
-    private static Cuenta validarCuenta(String nroCuenta){
-        if (!nroCuenta.matches("\\d+")) { // Verifica que todos los caracteres sean dígitos
-            throw new IllegalStateException("Formato de cuenta invalido");
-        }
-        Cuenta cuenta = cuentaDB.buscarCuenta(nroCuenta);
-        if (cuenta == null) {
-            throw new NullPointerException("¡La cuenta no existe en el sistema!");
-        }
-        return cuenta;
-    }
-
-    private static void validarMonto(BigDecimal monto){
-        if (monto.compareTo(BigDecimal.ZERO) <= 0){
-            throw new IllegalStateException("¡El monto debe ser mayor a cero!");
-        }
-    }
-
     private static void validarSaldoEnCuenta(Cuenta cuenta, BigDecimal monto){
         if (cuenta.consultarSaldo().compareTo(monto) <= 0) {
             throw new IllegalStateException("¡Saldo insuficiente!");
@@ -39,20 +22,18 @@ public class CuentaService {
     }
 
     public static String obtenerSaldo(String nroCuenta){
-        Cuenta cuenta = validarCuenta(nroCuenta);
+        Cuenta cuenta = cuentaDB.buscarCuenta(nroCuenta);
         return  "¡Consulta exitosa! " + consultaDataCuenta(cuenta);
     }
 
     public static String depositar(String nroCuenta, BigDecimal monto) {
-        Cuenta cuenta = validarCuenta(nroCuenta);
-        validarMonto(monto);
+        Cuenta cuenta = cuentaDB.buscarCuenta(nroCuenta);
         cuenta.deposito(monto);
         return "¡Depósito exitoso! " + consultaDataCuenta(cuenta);
     }
 
     public static String retirar(String nroCuenta, BigDecimal monto) {
-        Cuenta cuenta = validarCuenta(nroCuenta);
-        validarMonto(monto);
+        Cuenta cuenta = cuentaDB.buscarCuenta(nroCuenta);
         validarSaldoEnCuenta(cuenta, monto);
         cuenta.retiro(monto);
         return "¡Retiro exitoso! " + consultaDataCuenta(cuenta);

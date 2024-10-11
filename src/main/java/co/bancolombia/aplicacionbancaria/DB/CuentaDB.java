@@ -24,11 +24,17 @@ public class CuentaDB {
     }
 
     public static Cuenta buscarCuenta(String nroCuenta) {
+        Cuenta cta = null;
         for (Cuenta cuenta : cuentas) {
             if (cuenta.consultarCuenta().equals(nroCuenta)) {
-                return cuenta;
+                cta = cuenta;
+                return cta;
             }
+        }
+        if (cta == null) {
+            throw new NullPointerException("¡La cuenta no existe en el sistema!");
         }
         return null;
     }
+
 }
