@@ -2,14 +2,13 @@ package com.bancolombia.cuentabancaria.service;
 
 import com.bancolombia.cuentabancaria.model.entity.CuentaBancariaEntity;
 import com.bancolombia.cuentabancaria.model.entity.TransaccionEntity;
-import com.bancolombia.cuentabancaria.model.exception.DomainException;
+import com.bancolombia.cuentabancaria.model.request.TransaccionRQ;
 import com.bancolombia.cuentabancaria.repository.CuentaRepository;
 import com.bancolombia.cuentabancaria.repository.TransaccionRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -23,23 +22,45 @@ public class CuentaBancariaService {
         this.transaccionRepository = transaccionRepository;
     }
 
-    public boolean validSaldo(BigDecimal valor) throws DomainException {
+    public boolean validSaldo(BigDecimal valor){
         if(valor.compareTo(BigDecimal.ZERO) < 0){
-            throw new DomainException(1, "Saldo negativo", "El saldo no puede ser negativo");
+            throw new IllegalArgumentException("El saldo no puede ser negativo");
         }
         return true;
     }
 
-    public CuentaBancariaEntity getCuenta(Long id) throws DomainException {
+    public CuentaBancariaEntity getCuenta(Long id){
         Optional<CuentaBancariaEntity> cuenta = repository.findById(id);
-        if(cuenta.isEmpty()){
-            throw new DomainException(2, "Cuenta no encontrada", "La cuenta no existe");
+        if(cuenta == null){
+            throw new NullPointerException("La Cuenta bancaria no existe");
         }
         return cuenta.get();
     }
 
+    public CuentaBancariaEntity deposito(TransaccionRQ transaccionRQ){
+        CuentaBancariaEntity cuentaEntity = getCuenta(transaccionRQ.getIdCuenta());
+        if(cuentaEntity == null){
+            throw new NullPointerException("La Cuenta bancaria no existe");
+        }else if(validSaldo(transaccionRQ.getValor())){
+            cuentaEntity.deposito(transaccionRQ.getValor());
+            updateCuentaBancaria(cuentaEntity, "deposito", transaccionRQ.getValor());
+        }
+        return cuentaEntity;
+    }
+
+    public CuentaBancariaEntity retiro(TransaccionRQ transaccionRQ){
+        CuentaBancariaEntity cuentaEntity = getCuenta(transaccionRQ.getIdCuenta());
+        if(cuentaEntity == null){
+            throw new NullPointerException("La Cuenta bancaria no existe");
+        }else if(validSaldo(transaccionRQ.getValor())){
+            cuentaEntity.retiro(transaccionRQ.getValor());
+            updateCuentaBancaria(cuentaEntity, "retiro", transaccionRQ.getValor());
+        }
+        return cuentaEntity;
+    }
+
     public CuentaBancariaEntity updateCuentaBancaria(CuentaBancariaEntity cuentaBancariaEntity, String tipoTransaccion,
-                                                     BigDecimal valor) throws DomainException {
+                                                     BigDecimal valor){
         TransaccionEntity transaccion = new TransaccionEntity();
         transaccion.setCuentabancaria(cuentaBancariaEntity);
         transaccion.setTipotransaccion(tipoTransaccion);

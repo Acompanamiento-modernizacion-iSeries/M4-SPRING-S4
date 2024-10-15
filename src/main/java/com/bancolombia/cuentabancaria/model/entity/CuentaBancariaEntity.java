@@ -61,4 +61,12 @@ public class CuentaBancariaEntity {
     public void setTransacciones(List<TransaccionEntity> transacciones) {
         this.transacciones = transacciones;
     }
+
+    public void deposito(BigDecimal valor){
+        saldo = saldo.add(valor);
+    }
+
+    public void retiro(BigDecimal valor){
+        saldo = saldo.subtract(valor);
+    }
 }
