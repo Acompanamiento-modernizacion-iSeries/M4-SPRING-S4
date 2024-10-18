@@ -2,6 +2,7 @@ package co.bancolombia.aplicacionbancaria.controller;
 
 import co.bancolombia.aplicacionbancaria.model.dto.CrearCuentaDTO;
 import co.bancolombia.aplicacionbancaria.model.dto.CuentaDTO;
+import co.bancolombia.aplicacionbancaria.model.dto.DepositoRetiroDTO;
 import co.bancolombia.aplicacionbancaria.model.dto.NumeroCuentaDTO;
 import co.bancolombia.aplicacionbancaria.model.entity.Cuenta;
 import co.bancolombia.aplicacionbancaria.service.CuentaService;
@@ -42,6 +43,19 @@ public class CuentaController {
     public ResponseEntity<String> registrarCuenta(@Valid @RequestBody CrearCuentaDTO crearCuentaDTO){
         Cuenta cuentaCreada = cuentaService.crearCuenta(crearCuentaDTO);
         String mensaje =  "REGISTRO EXITOSO!!!\n\n"  ;
+        return new ResponseEntity<>(mensaje, HttpStatus.OK);
+    }
+
+    @PostMapping("/deposito")
+    public ResponseEntity<String> depositoCuenta(@Valid @RequestBody DepositoRetiroDTO depositoRetiroDTO) throws Exception {
+        Cuenta depositoCreada = cuentaService.deposito(depositoRetiroDTO);
+        String mensaje =  "DEPOSITO EXITOSO!!!\n\n"  ;
+        return new ResponseEntity<>(mensaje, HttpStatus.OK);
+    }
+    @PostMapping("/retiro")
+    public ResponseEntity<String> retiroCuenta(@Valid @RequestBody DepositoRetiroDTO depositoRetiroDTO) throws Exception {
+        Cuenta depositoCreada = cuentaService.retiro(depositoRetiroDTO);
+        String mensaje =  "RETIRO EXITOSO!!!\n\n"  ;
         return new ResponseEntity<>(mensaje, HttpStatus.OK);
     }
 /*

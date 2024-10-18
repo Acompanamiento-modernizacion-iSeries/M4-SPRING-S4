@@ -2,6 +2,7 @@ package co.bancolombia.aplicacionbancaria.model.entity;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -21,7 +22,7 @@ public class Cuenta {
     @Column(name = "saldo")
     private BigDecimal monto;
 
-    @OneToMany(mappedBy = "cuenta")
+    @OneToMany(mappedBy = "cuenta", cascade = CascadeType.ALL)
     private List<Transaccion> transacciones;
 
     public Cuenta(String nroCuenta, String nombreTitular, BigDecimal monto, List<Transaccion> transacciones) {
@@ -73,12 +74,33 @@ public class Cuenta {
         this.transacciones = transacciones;
     }
 
-    public void deposito(BigDecimal valor) {
+    public void deposito(BigDecimal valor) throws Exception {
+        if (valor.compareTo(BigDecimal.ZERO) <= 0 ) {
+            throw new IllegalArgumentException("El monto del depósito debe ser mayor a 0");
+        }
         monto = monto.add(valor);
     }
 
-    public void retiro(BigDecimal valor) {
+    public void retiro(BigDecimal valor) throws Exception {
+        if (valor.compareTo(BigDecimal.ZERO) <= 0 ) {
+            throw new IllegalArgumentException("El monto del retiro debe ser mayor a 0");
+        }
+        if (monto.compareTo(valor) < 0) {
+            throw new IllegalArgumentException("Saldo insuficiente");
+        }
         monto = monto.subtract(valor);
+    }
+
+    public Transaccion asignarTransaccion(String tipoTransaccion, BigDecimal monto) throws Exception {
+        if (!tipoTransaccion.equals("RETIRO") && !tipoTransaccion.equals( "DEPOSITO") ) {
+            throw new IllegalArgumentException("Tipo de transacción NO valida");
+        }
+        Transaccion transaccion = new Transaccion();
+        transaccion.setFecha(LocalDateTime.now());
+        transaccion.setTipoTrx(tipoTransaccion);
+        transaccion.setMonto(monto);
+        transaccion.setCuenta(this);
+        return transaccion;
     }
 
     @Override

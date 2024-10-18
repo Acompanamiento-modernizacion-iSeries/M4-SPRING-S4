@@ -1,4 +1,4 @@
-package co.bancolombia.aplicacionbancaria.DTO;
+package co.bancolombia.aplicacionbancaria.dto;
 
 import jakarta.validation.constraints.*;
 

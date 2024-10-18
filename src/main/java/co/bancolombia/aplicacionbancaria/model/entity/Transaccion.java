@@ -3,6 +3,7 @@ package co.bancolombia.aplicacionbancaria.model.entity;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="transacciones")
@@ -13,19 +14,19 @@ public class Transaccion {
     private Long id;
 
     @Column(name = "tipo_trx")
-    private String tipoTrx;
+    private String tipoTrx;       // "RETIRO" o "DEPOSITO"
 
     @Column(name = "valor")
     private BigDecimal monto;
 
     @Column(name = "fecha")
-    private Timestamp fecha;
+    private LocalDateTime fecha;
 
     @ManyToOne
-    @JoinColumn(name = "id_cuenta")
+    @JoinColumn(name = "id_cuenta", nullable = false)
     private Cuenta cuenta;
 
-    public Transaccion(String tipoTrx, BigDecimal monto, Timestamp fecha, Cuenta cuenta) {
+    public Transaccion(String tipoTrx, BigDecimal monto, LocalDateTime fecha, Cuenta cuenta) {
         this.tipoTrx = tipoTrx;
         this.monto = monto;
         this.fecha = fecha;
@@ -58,11 +59,11 @@ public class Transaccion {
         this.monto = monto;
     }
 
-    public Timestamp getFecha() {
+    public LocalDateTime getFecha() {
         return fecha;
     }
 
-    public void setFecha(Timestamp fecha) {
+    public void setFecha(LocalDateTime fecha) {
         this.fecha = fecha;
     }
 

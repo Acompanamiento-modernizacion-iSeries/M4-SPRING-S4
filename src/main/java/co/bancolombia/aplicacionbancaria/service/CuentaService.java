@@ -1,9 +1,6 @@
 package co.bancolombia.aplicacionbancaria.service;
 
-import co.bancolombia.aplicacionbancaria.model.dto.BuscarCuentaDTO;
-import co.bancolombia.aplicacionbancaria.model.dto.CrearCuentaDTO;
-import co.bancolombia.aplicacionbancaria.model.dto.CuentaDTO;
-import co.bancolombia.aplicacionbancaria.model.dto.NumeroCuentaDTO;
+import co.bancolombia.aplicacionbancaria.model.dto.*;
 import co.bancolombia.aplicacionbancaria.model.entity.Cuenta;
 import co.bancolombia.aplicacionbancaria.repository.ICuentaRepository;
 import co.bancolombia.aplicacionbancaria.repository.ITransaccionRepository;
@@ -66,6 +63,21 @@ public class CuentaService {
             throw new RuntimeException("¡No se pudo crear la cuenta!");
         }
         return cuentaNueva;
+    }
+    @Transactional
+    public Cuenta deposito(DepositoRetiroDTO depositoRetiroDTO) throws Exception {
+        Cuenta cuenta = this.obtenerCuenta(depositoRetiroDTO.getNroCuenta());
+        cuenta.deposito(depositoRetiroDTO.getMonto());
+        transaccionRepository.save(cuenta.asignarTransaccion("DEPOSITO", depositoRetiroDTO.getMonto()));
+        return cuentaRepository.save(cuenta);
+    }
+
+    @Transactional
+    public Cuenta retiro(DepositoRetiroDTO depositoRetiroDTO) throws Exception {
+        Cuenta cuenta = this.obtenerCuenta(depositoRetiroDTO.getNroCuenta());
+        cuenta.retiro(depositoRetiroDTO.getMonto());
+        transaccionRepository.save(cuenta.asignarTransaccion("RETIRO", depositoRetiroDTO.getMonto()));
+        return cuentaRepository.save(cuenta);
     }
 
 }

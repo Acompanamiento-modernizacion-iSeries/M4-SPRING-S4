@@ -13,7 +13,7 @@ public class CrearCuentaDTO {
     @NotEmpty(message ="El número de cuenta es Obligatorio")
     @Size(max = 10, message = "El número de cuenta debe tener un máximo de 10 caracteres!")
     @Size(min = 4, message = "El número de cuenta debe tener un minimo de 4 caracteres!")
-    @Pattern(regexp="^\\d+$", message = "El número de cuenta debe ser un valor númerico")
+    @Pattern(regexp="^\\d+$", message = "El número de cuenta debe ser un valor numérico")
     private String nroCuenta;// nro_cuenta Varchar(10)   NOT NULL,
 
     @NotEmpty(message ="El titular es Obligatorio")
