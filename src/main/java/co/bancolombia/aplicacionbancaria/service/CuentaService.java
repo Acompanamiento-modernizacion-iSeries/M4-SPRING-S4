@@ -1,46 +1,71 @@
 package co.bancolombia.aplicacionbancaria.service;
 
-import co.bancolombia.aplicacionbancaria.DB.CuentaDB;
-import co.bancolombia.aplicacionbancaria.model.Cuenta;
+import co.bancolombia.aplicacionbancaria.model.dto.BuscarCuentaDTO;
+import co.bancolombia.aplicacionbancaria.model.dto.CrearCuentaDTO;
+import co.bancolombia.aplicacionbancaria.model.dto.CuentaDTO;
+import co.bancolombia.aplicacionbancaria.model.dto.NumeroCuentaDTO;
+import co.bancolombia.aplicacionbancaria.model.entity.Cuenta;
+import co.bancolombia.aplicacionbancaria.repository.ICuentaRepository;
+import co.bancolombia.aplicacionbancaria.repository.ITransaccionRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class CuentaService {
 
-    private static CuentaDB cuentaDB;
+    private final ICuentaRepository cuentaRepository;
+    private final ITransaccionRepository transaccionRepository;
 
-    public CuentaService(CuentaDB cuentaDB){
-        this.cuentaDB = cuentaDB;
+    public CuentaService(ICuentaRepository cuentaRepository, ITransaccionRepository transaccionRepository) {
+        this.cuentaRepository = cuentaRepository;
+        this.transaccionRepository = transaccionRepository;
     }
 
-    private static void validarSaldoEnCuenta(Cuenta cuenta, BigDecimal monto){
-        if (cuenta.consultarSaldo().compareTo(monto) <= 0) {
-            throw new IllegalStateException("¡Saldo insuficiente!");
+    @Transactional
+    public BigDecimal obtenerSaldoId(CuentaDTO cuentaDTO){
+        Long id = cuentaDTO.getId();
+        Cuenta cuenta = obtenerCuentaById(id);
+        return  cuenta.getMonto();
+    }
+
+    @Transactional
+    public BigDecimal obtenerSaldoCuenta(NumeroCuentaDTO nroCuentaDTO){
+        String nroCuenta = nroCuentaDTO.getNroCuenta();
+        Cuenta cuenta = obtenerCuenta(nroCuenta);
+        return  cuenta.getMonto();
+    }
+
+    public Cuenta obtenerCuenta(String nroCuenta){
+        Optional<Cuenta> cuentaEncontrada = cuentaRepository.findByNroCuenta(nroCuenta);
+        if (cuentaEncontrada.isEmpty()){
+            throw new NoSuchElementException("La Cuenta " + nroCuenta + " No fue encontrada");
         }
+        return  cuentaEncontrada.get();
     }
 
-    public static String obtenerSaldo(String nroCuenta){
-        Cuenta cuenta = cuentaDB.buscarCuenta(nroCuenta);
-        return  "¡Consulta exitosa! " + consultaDataCuenta(cuenta);
+    public Cuenta obtenerCuentaById(Long idCuenta){
+        Optional<Cuenta> cuentaEncontrada = cuentaRepository.findById(idCuenta);
+        if (cuentaEncontrada.isEmpty()){
+            throw new NoSuchElementException("La Cuenta con Id " + idCuenta + " No fue encontrada");
+        }
+        return  cuentaEncontrada.get();
     }
 
-    public static String depositar(String nroCuenta, BigDecimal monto) {
-        Cuenta cuenta = cuentaDB.buscarCuenta(nroCuenta);
-        cuenta.deposito(monto);
-        return "¡Depósito exitoso! " + consultaDataCuenta(cuenta);
+    @Transactional
+    public Cuenta crearCuenta(CrearCuentaDTO crearCuentaDTO){
+        Cuenta cuenta = new Cuenta();
+        cuenta.setNroCuenta(crearCuentaDTO.getNroCuenta());
+        cuenta.setNombreTitular(crearCuentaDTO.getTitular());
+        cuenta.setMonto(crearCuentaDTO.getMonto());
+        Cuenta cuentaNueva = cuentaRepository.save(cuenta);
+        if (cuentaNueva == null) {
+            throw new RuntimeException("¡No se pudo crear la cuenta!");
+        }
+        return cuentaNueva;
     }
 
-    public static String retirar(String nroCuenta, BigDecimal monto) {
-        Cuenta cuenta = cuentaDB.buscarCuenta(nroCuenta);
-        validarSaldoEnCuenta(cuenta, monto);
-        cuenta.retiro(monto);
-        return "¡Retiro exitoso! " + consultaDataCuenta(cuenta);
-    }
-
-    public static String consultaDataCuenta(Cuenta cuenta) {
-        return    " \nNro. Cuenta : "  + cuenta.consultarCuenta()
-                + " \nSaldo       : $" + cuenta.consultarSaldo();
-    }
 }
