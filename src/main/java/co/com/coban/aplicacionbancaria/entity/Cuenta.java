@@ -3,22 +3,28 @@ package co.com.coban.aplicacionbancaria.entity;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "cuentas")
 public class Cuenta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cuenta_id")
     private Long id;
-    private String nombre;
+    private String nombreUsuario;
     private String tipo;
     private BigDecimal saldo;
+
+    @OneToMany(mappedBy = "cuenta", fetch = FetchType.LAZY)
+    private Set<Transaccion> historialTransacciones = new HashSet<>();
 
     public Cuenta() {
     }
 
     public Cuenta(String nombre, String tipo, BigDecimal saldo) {
-        this.nombre = nombre;
+        this.nombreUsuario = nombre;
         this.tipo = tipo;
         this.saldo = saldo;
     }
@@ -31,12 +37,12 @@ public class Cuenta {
         this.id = id;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombreUsuario() {
+        return nombreUsuario;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombreUsuario(String nombre) {
+        this.nombreUsuario = nombre;
     }
 
     public void setTipo(String tipo) {

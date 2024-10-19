@@ -3,6 +3,7 @@ package co.com.coban.aplicacionbancaria.controller;
 import co.com.coban.aplicacionbancaria.dto.CuentaDTO;
 import co.com.coban.aplicacionbancaria.dto.TransaccionDTO;
 import co.com.coban.aplicacionbancaria.service.CuentaService;
+import co.com.coban.aplicacionbancaria.service.CuentaServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,6 +21,11 @@ public class CuentaController {
 
     public CuentaController(CuentaService cuentaService) {
         this.cuentaService = cuentaService;
+    }
+
+    @GetMapping("/{id}")
+    public String validarCuenta(@PathVariable Long id) {
+        return cuentaService.validarCuenta(id) ? "Cuenta válida" : "Cuenta inválida";
     }
 
     @GetMapping("/saldo")

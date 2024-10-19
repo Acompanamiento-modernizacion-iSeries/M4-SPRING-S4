@@ -1,20 +1,18 @@
-# M4-SPRING-S3
-# Taller: API para Manejo de Cuenta 3
+# M4-SPRING-T4
+# Taller: API para Manejo de Cuenta 4
 > **Larry M. Ramírez - Coach Técnico**
 
 ## Objetivo.
-Implementar un sistema de auditoría que registre todas las solicitudes HTTP y las operaciones realizadas sobre una cuenta bancaria. Además, validar los datos recibidos en las solicitudes.
+Implementar la conexión al sistema de gestión de bases de datos PostgreSQL que persista cuentas bancarias y las transacciones asociadas a las mismas.
 
 ## Instrucciones
-- Modificar el Controlador `CuentaController` :
-	- Asegurarse de que todas las operaciones bancarias (consulta de saldo, depósito y retiro) estén bien definidas.
-	- Usar anotaciones de validación como `@NotNull`, `@Min`, etc., para validar los datos de entrada (monto de depósito/retiro).
-- Crear el Interceptor `AuditoriaInterceptor`:
-	- Implementar un interceptor que registre las solicitudes HTTP entrantes y las operaciones completadas.
-	- Asegurarse de que se registren tanto las solicitudes válidas como los errores.
-- Registrar el interceptor en el contexto de Spring para que se aplique a todas las solicitudes relacionadas con la cuenta bancaria.
-- Realizar pruebas de depósito y retiro, asegurándose de que las excepciones se manejen correctamente.
+- Crear una entidad llamada `Transaccion` que almacene el tipo de transacción (retiro, depósito), monto, y fecha de la transacción.
+- Crear una entidad llamada `Cuenta` que almacene los datos asociados a una cuenta bancaria (información del cliente, saldo,  historial de transacciones, etc).
+- Establecer de forma adecuada el mapeo de las entidades principal e inversa con las respectivas anotaciones `@OneToMany` y `@ManyToOne`.
+- Implementar un servicio y controlador para manejar las transacciones:
+	- Un cliente puede realizar depósitos y retiros, afectando su saldo.
+	- Registrar una transacción cada vez que se realice una operación.
+- Realizar pruebas de depósito y retiro, asegurándose de que las excepciones se manejen correctamente y el registro de transacciones se esté almacenando de forma adecuada.
 - Verificar que el saldo se actualice después de cada operación exitosa.
-- Verificar en los logs del servidor que todas las solicitudes y transacciones queden registradas.
 
 **Nota:** Los talleres deben entregarse por medio de la estrategia establecida para la formación, por medio de un Pull Request desde el repositorio Fork hacia la rama main del repositorio del taller. 
