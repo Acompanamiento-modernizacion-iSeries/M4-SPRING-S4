@@ -9,9 +9,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequestMapping("/cuenta")
 public class CuentaController {
+    // Swagger spring doc http://localhost:8080/swagger-ui/index.html
 
     private final CuentaService cuentaService;
 
@@ -19,15 +22,16 @@ public class CuentaController {
         this.cuentaService = cuentaService;
     }
 
-    @GetMapping("saldo")
-    public String saldo(@Valid @RequestBody CuentaDTO cuenta) {
-        return cuentaService.obtenerSaldo(cuenta.getId());
+    @GetMapping("/saldo")
+    public String saldo(@RequestBody CuentaDTO cuenta) {
+        BigDecimal saldo = cuentaService.obtenerSaldo(cuenta.getId());
+        return "El saldo de la cuenta es: " + saldo;
     }
 
-//    @PostMapping("/{id}/deposito/{monto}")
-//    public String deposito(@PathVariable("id") String id, @PathVariable BigDecimal monto) {
-//        return cuentaService.deposito(id, monto);
-//    }
+    @PostMapping("/{id}/deposito/{monto}")
+    public String deposito2(@PathVariable("id") Long id, @PathVariable BigDecimal monto) {
+        return cuentaService.deposito(id, monto);
+    }
 
     @PostMapping("/deposito")
     public String deposito(@Valid @RequestBody TransaccionDTO transaccion, @Valid @RequestBody CuentaDTO cuenta) {

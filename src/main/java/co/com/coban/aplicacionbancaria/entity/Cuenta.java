@@ -1,9 +1,15 @@
 package co.com.coban.aplicacionbancaria.entity;
 
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 
+@Entity
+@Table(name = "cuentas")
 public class Cuenta {
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String nombre;
     private String tipo;
     private BigDecimal saldo;
@@ -11,18 +17,17 @@ public class Cuenta {
     public Cuenta() {
     }
 
-    public Cuenta(String id, String nombre, String tipo, BigDecimal saldo) {
-        this.id = id;
+    public Cuenta(String nombre, String tipo, BigDecimal saldo) {
         this.nombre = nombre;
         this.tipo = tipo;
         this.saldo = saldo;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

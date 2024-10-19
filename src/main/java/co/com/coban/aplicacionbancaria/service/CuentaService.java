@@ -1,26 +1,33 @@
 package co.com.coban.aplicacionbancaria.service;
 
+import co.com.coban.aplicacionbancaria.entity.Cuenta;
+import co.com.coban.aplicacionbancaria.repository.CuentaRepository;
 import co.com.coban.aplicacionbancaria.repository.DbCuenta;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
 @Service
 public class CuentaService {
-    private DbCuenta dbCuenta;
+    private final DbCuenta dbCuenta;
 
-    public CuentaService(DbCuenta dbCuenta) {
+    private CuentaRepository cuentaRepository;
+
+    public CuentaService(DbCuenta dbCuenta, CuentaRepository cuentaRepository) {
         this.dbCuenta = dbCuenta;
+        this.cuentaRepository = cuentaRepository;
     }
 
-    public String obtenerSaldo(String id) {
-        if (dbCuenta.obtenerCuenta(id) == null) {
-            throw new IllegalArgumentException("La cuenta no existe.");
+    public BigDecimal obtenerSaldo(Long id) {
+        Cuenta cuenta = cuentaRepository.findById(id).isPresent() ? cuentaRepository.findById(id).get() : null;
+        if (cuenta == null) {
+            throw new IllegalArgumentException("La cuenta identificada con el id " + id + " no existe :(");
         }
-        return "El saldo de la cuenta es: " + dbCuenta.obtenerCuenta(id).getSaldo();
+        return cuenta.getSaldo();
     }
 
-    public String deposito(String id, BigDecimal monto) {
+    public String deposito(Long id, BigDecimal monto) {
         validarMonto(monto);
         if(!validarCuenta(id)){
             return "La cuenta no existe.";
@@ -29,7 +36,7 @@ public class CuentaService {
         return "Depósito exitoso. Saldo actual: " + dbCuenta.obtenerCuenta(id).getSaldo();
     }
 
-    public String retiro(String id, BigDecimal monto) {
+    public String retiro(Long id, BigDecimal monto) {
         validarMonto(monto);
         if (!validarCuenta(id)) {
             return "La cuenta no existe.";
@@ -41,7 +48,7 @@ public class CuentaService {
         return "Retiro exitoso. Saldo actual: " + dbCuenta.obtenerCuenta(id).getSaldo();
     }
 
-    public boolean validarCuenta(String id) {
+    public boolean validarCuenta(Long id) {
         return dbCuenta.obtenerCuenta(id) != null;
     }
 

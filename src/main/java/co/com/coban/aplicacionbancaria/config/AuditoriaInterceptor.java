@@ -13,7 +13,7 @@ public class AuditoriaInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        System.out.println("Solicitud (entrante) antres de ejecutar el método del controlador: " + request.getRequestURI());
+        System.out.println("Solicitud (entrante) antes de ejecutar el método del controlador: " + request.getRequestURI());
         return true;
     }
 
@@ -21,7 +21,7 @@ public class AuditoriaInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
     throws Exception {
         System.out.println(
-                "Solicitud (saliente) después de ejecutar el método del controlador: "
+                "Solicitud (saliente) despues de ejecutar el método del controlador: "
                 + request.getMethod() + " " + request.getRequestURI() + " " + response.getStatus());
 
     }

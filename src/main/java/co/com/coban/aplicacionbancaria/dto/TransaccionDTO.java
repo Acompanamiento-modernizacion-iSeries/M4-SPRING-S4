@@ -1,20 +1,16 @@
 package co.com.coban.aplicacionbancaria.dto;
 
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 
 public class TransaccionDTO {
     @NotNull(message = "El monto es obligatorio")
-    @Positive(message = "El monto debe ser mayor a cero")
+    @Min(value = 1, message = "El monto debe ser mayor a cero")
     @Digits(integer = 10, fraction = 2, message = "El monto debe tener máximo 10 enteros y 2 decimales")
     private BigDecimal monto;
     private String descripcion;
-    @NotNull(message = "El id de la cuenta es obligatorio")
-    @NotEmpty(message = "El id de la cuenta no puede estar vacío")
+    @NotBlank(message = "El id de la cuenta no puede ser vacío")
     @Positive(message = "El id de la cuenta debe ser mayor a cero")
     private String idCuenta;
 
